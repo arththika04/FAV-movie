@@ -1,6 +1,11 @@
 export default {
-  plugins: {
-    "@tailwindcss/postcss": {},
-    autoprefixer: {},
+  darkMode: "class",
+  content: [
+    "./index.html",
+    "./src/**/*.{js,jsx}",
+  ],
+  theme: {
+    extend: {},
   },
-}
+  plugins: [],
+};
