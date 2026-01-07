@@ -1,7 +1,7 @@
 import { useReducer, useRef, useContext, useMemo, useCallback } from "react";
 import { ThemeContext, ThemeProvider } from "./context/ThemeContext";
 import { movieReducer } from "./reducer/movieReducer";
-import MovieApp from "./components/MovieApp";
+import MovieApp from "./components/MovieForm";
 
 // Idhu thaan unga UI logic ellathaiyum vachirukkum
 function MainContent() {
