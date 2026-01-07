@@ -1,8 +1,10 @@
 import { useReducer, useRef, useContext, useMemo, useCallback } from "react";
-import { ThemeContext, ThemeProvider } from "./ThemeContext";
-import { movieReducer } from "./movieReducer";
+import { ThemeContext, ThemeProvider } from "./context/ThemeContext";
+import { movieReducer } from "./reducer/movieReducer";
+import MovieApp from "./components/MovieApp";
 
-function MovieApp() {
+// Idhu thaan unga UI logic ellathaiyum vachirukkum
+function MainContent() {
   const [movies, dispatch] = useReducer(movieReducer, []);
   const inputRef = useRef();
   const { dark, toggleTheme } = useContext(ThemeContext);
@@ -15,7 +17,7 @@ function MovieApp() {
   }, []);
 
   const stats = useMemo(() => {
-    const watched = movies.filter(m => m.watched).length;
+    const watched = movies.filter((m) => m.watched).length;
     return {
       total: movies.length,
       watched,
@@ -23,75 +25,52 @@ function MovieApp() {
   }, [movies]);
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-bold">🎬 Favorite Movies</h1>
-        <button
-          onClick={toggleTheme}
-          className="px-3 py-1 bg-indigo-600 text-white rounded"
-        >
-          {dark ? "Light" : "Dark"}
-        </button>
-      </div>
+    <div className={`min-h-screen flex items-center justify-center p-4 ${dark ? "bg-gray-900" : "bg-gray-100"}`}>
+      <div className={`shadow-lg rounded-lg p-8 w-full max-w-md ${dark ? "bg-zinc-800 text-white" : "bg-white text-black"}`}>
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold mb-4">Favorite Movies</h1>
+          
+          {/* Input and Add Section */}
+          <div className="flex gap-2 mb-4">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Add a movie..."
+              className="flex-1 p-2 border rounded text-black"
+            />
+            <button 
+              onClick={addMovie}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Add
+            </button>
+            <button
+              onClick={toggleTheme}
+              className={`px-4 py-2 rounded text-white ${dark ? "bg-green-600" : "bg-green-500"}`}
+            >
+              {dark ? "Switch to Light Theme" : "Switch to Dark Theme"}
+            </button>
+          </div>
+        </div>
 
-      <div className="flex gap-2 mb-4">
-        <input
-          ref={inputRef}
-          className="flex-1 p-2 border rounded"
-          placeholder="Add movie..."
-          autoFocus
-        />
-        <button
-          onClick={addMovie}
-          className="bg-green-600 text-white px-4 rounded"
-        >
-          Add
-        </button>
-      </div>
+        {/* Movie List - Indha component dhaan unga list-ah kaatum */}
+        <MovieApp movies={movies} dispatch={dispatch} />
 
-      <ul className="space-y-2">
-        {movies.map(movie => (
-          <li
-            key={movie.id}
-            className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded"
-          >
-            <span className={movie.watched ? "line-through" : ""}>
-              {movie.title}
-            </span>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() =>
-                  dispatch({ type: "TOGGLE", id: movie.id })
-                }
-                className="text-sm bg-blue-500 text-white px-2 rounded"
-              >
-                Watched
-              </button>
-              <button
-                onClick={() =>
-                  dispatch({ type: "REMOVE", id: movie.id })
-                }
-                className="text-sm bg-red-500 text-white px-2 rounded"
-              >
-                ❌
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-4 text-sm">
-        Total: {stats.total} | Watched: {stats.watched}
+        {/* Stats Section */}
+        <div className="mt-6 text-center text-sm font-medium border-t pt-4">
+          <p>Total Movies: {stats.total}</p>
+          <p>Watched Movies: {stats.watched}</p>
+        </div>
       </div>
     </div>
   );
 }
 
+// Main Export - Indha component dhaan ThemeProvider-ai wrap pannum
 export default function App() {
   return (
     <ThemeProvider>
-      <MovieApp />
+      <MainContent />
     </ThemeProvider>
   );
 }
